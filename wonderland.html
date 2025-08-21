@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex">
+    <link rel="icon" type="image/x-icon" href="assets/icons/favicon.ico">
+    <link rel="stylesheet" href="assets/text_box.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <title>Welcome to Wonderland</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            /* overflow: hidden; */
+            background-color: black;
+        }
+        .content-wrapper {
+            width: 100%;
+            /* min-height: 100vh; */
+            display: flex;
+            flex-direction: column;
+        }
+
+        #videoContainer {
+            height: 100vh;
+            width: 100%;
+            position: relative;
+        }
+
+        .box-container {
+            min-height: 100vh;
+            position: relative;
+            background-color: black;
+            padding: 20px;
+        }
+        #mainVideo {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            opacity: 1;
+        }
+        .hidden {
+            opacity: 0;
+        }
+
+        .maps-container {
+            position: relative;
+            width: 100%;
+            background: black;
+        }
+
+        .floor-map {
+            height: 100vh;
+            display: grid;
+            place-items: center;
+            opacity: 0;
+            transform: scale(0.96);
+            transition: opacity .5s ease, transform .5s ease;
+        }       
+
+        .floor-map object,
+        .floor-map img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        .floor-map.visible {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .floor-map svg {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        
+        .house-outline {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            z-index: 2;
+            pointer-events: none;
+            display: grid;
+            place-items: center;
+        }
+        .house-outline img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+        .floors {
+            position: relative;
+            z-index: 1;
+        }
+        
+        .stacked-maps {
+        /* existing knobs */
+            --base-top: 10vh;
+            --gap: 50px;
+            --stage-h: 70vh;
+
+            --map-max-w: 60vw;
+            --map-max-h: 70vh;
+            --floor-scale: 0.5;
+
+            position: relative;
+            background: #000;
+        }
+        
+        .stacked-maps > .outline {
+            position: sticky;
+            top: var(--base-top);
+            height: var(--stage-h);
+            /* center horizontally */
+            display: block;
+            margin-inline: auto;
+            width: auto;
+            height: auto;
+            max-width: var(--map-max-w);
+            max-height: var(--map-max-h);
+            object-fit: contain;
+            z-index: 100;
+            pointer-events: none;
+            opacity: 0.95;
+        }
+        
+
+        .stacked-maps > .floor {
+            position: sticky;
+            top: calc(var(--base-top) + (var(--i) * var(--gap)));
+            height: var(--stage-h);
+            z-index: var(--z);
+            display: grid;
+            place-items: center; /* centers the image box */
+        }
+        
+        
+        .stacked-maps > .floor:is(:hover, :focus-within) {
+            transform: none;
+        }        
+        .stacked-maps > .floor > img {
+            display: block;
+            width: auto;
+            height: auto;
+            max-width: calc(var(--map-max-w) * var(--floor-scale));
+            max-height: calc(var(--map-max-h) * var(--floor-scale));
+            object-fit: contain;
+        }
+        html, body { overflow: auto; }
+        
+        @supports (animation-timeline: scroll()) {
+        /* optional: fancy scroll-driven reveal (Chrome/Safari TP) */
+        }
+        
+        .stacked-maps > .floor {
+            opacity: 1;
+            transform: none;
+        }        
+    </style>
+</head>
+<body>
+    <div class="content-wrapper">
+        <div id="videoContainer">
+            <video id="mainVideo" playsinline muted preload="auto">
+                <source src="assets/Video_bunnyhop_v2.mp4" type="video/mp4">
+            </video>
+        </div>
+        <div class="stacked-maps"
+            style="--base-top: 8vh; --gap: 50px; --stage-h: 70vh;">
+        <!-- Outline pinned near the top -->
+        <img class="outline" src="assets/house_map_house_outline.png" alt="Outline">
+
+        <!-- Floors: first one (F3) parks closest to the top, then F2, F1, F0 -->
+        <section class="floor" style="--i:0; --z:4">
+            <img src="assets/house_map_floor3.png" alt="F3">
+        </section>
+        <section class="floor" style="--i:1; --z:3">
+            <img src="assets/house_map_floor2.png" alt="F2">
+        </section>
+        <section class="floor" style="--i:2; --z:2">
+            <img src="assets/house_map_floor1.png" alt="F1">
+        </section>
+        <section class="floor" style="--i:3; --z:1">
+            <img src="assets/house_map_floor0.png" alt="F0">
+        </section>
+        </div>   
+
+        <!-- <div class="box-container">
+            <div id="ct">
+            <div class="corner "id="left_top"></div>
+            <div class="corner" id="left_bottom"></div>
+            <div class="corner" id="right_top"></div>
+            <div class="corner" id="right_bottom"></div>
+            <span>Winston Churchill</span>
+            <blockquote>
+                <p><i>&ldquo;Success consists of going from failure to failure without loss of enthusiasm.&rdquo; </i></p>
+            </blockquote>
+            </div>
+        </div> -->
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const video = document.getElementById('mainVideo');
+            let hasPlayed = false;
+
+            // Load and pause at first frame
+            video.load();
+            video.currentTime = 0;
+
+            function playVideo() {
+                if (!hasPlayed) {
+                    video.play();
+                    hasPlayed = true;
+                    
+                    // Remove event listeners after first play
+                    document.removeEventListener('touchstart', playVideo);
+                    document.removeEventListener('scroll', playVideo);
+                }
+            }
+
+            // Touch event
+            document.addEventListener('touchstart', playVideo);
+
+            // Scroll event
+            document.addEventListener('scroll', playVideo);
+
+            // Click event
+            document.addEventListener('click', playVideo);
+
+        });
+    </script>
+</body>
+</html>
