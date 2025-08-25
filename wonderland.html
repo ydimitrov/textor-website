@@ -7,6 +7,9 @@
     <link rel="icon" type="image/x-icon" href="assets/icons/favicon.ico">
     <link rel="stylesheet" href="assets/text_box.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
     <title>Welcome to Wonderland</title>
     <style>
         body, html {
@@ -16,6 +19,7 @@
             height: 100%;
             /* overflow: hidden; */
             background-color: black;
+            font-family: 'Cinzel', serif;
         }
         .content-wrapper {
             width: 100%;
@@ -163,6 +167,69 @@
             opacity: 1;
             transform: none;
         }        
+        
+        /* Story styles */
+        .intro-section {
+            color: #fff;
+            background: #000;
+            padding: 48px 24px 32px;
+            display: grid;
+            gap: 14px;
+            place-items: center;
+        }
+        .intro-section blockquote {
+            margin: 0;
+            font-size: clamp(16px, 2.5vw, 24px);
+            line-height: 1.6;
+            max-width: 900px;
+            text-align: center;
+            text-wrap: balance;
+        }
+        .intro-section p {
+            margin: 0;
+            font-size: clamp(14px, 2vw, 18px);
+            line-height: 1.7;
+            max-width: 900px;
+            text-align: center;
+            text-wrap: pretty;
+        }
+        .details-section {
+            color: #fff;
+            background: #000;
+            padding: 48px 24px;
+            display: grid;
+            gap: 18px;
+            place-items: center;
+        }
+        .details-section .lead {
+            font-size: clamp(18px, 2.5vw, 24px);
+            text-align: center;
+            text-wrap: balance;
+        }
+        .details-section .meta {
+            font-size: clamp(14px, 2vw, 18px);
+            opacity: 0.9;
+            text-align: center;
+        }
+        .details-section blockquote {
+            margin: 8px 0 0 0;
+            font-size: clamp(14px, 2vw, 18px);
+            opacity: 0.9;
+            text-align: center;
+        }
+        .logo-section {
+            background: #000;
+            display: grid;
+            place-items: center;
+            padding: 40px 24px 64px;
+        }
+        .logo-section img {
+            width: auto;
+            height: auto;
+            max-width: min(520px, 80vw);
+            object-fit: contain;
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -172,6 +239,14 @@
                 <source src="assets/Video_bunnyhop_v2.mp4" type="video/mp4">
             </video>
         </div>
+        <section class="intro-section">
+            <blockquote>
+                <p><i>&ldquo;Where should I go?&rdquo; &mdash; Alice</i></p>
+                <p><i>&ldquo;That depends on where you want to end up.&rdquo; &mdash; The Cheshire Cat</i></p>
+            </blockquote>
+            <p>Follow us down the rabbit hole... for a world of wonders.</p>
+            <p>Le Cirque des Rêves Oubliés is back in town! On September 13, the curtains to Wonderland open at Textor.</p>
+        </section>
         <div class="stacked-maps"
             style="--base-top: 8vh; --gap: 50px; --stage-h: 70vh;">
         <!-- Outline pinned near the top -->
@@ -191,6 +266,21 @@
             <img src="assets/house_map_floor0.png" alt="F0">
         </section>
         </div>   
+
+        <section class="details-section">
+            <p class="lead">4 FLOORS &ndash; 5 ROOMS &ndash; 1 GARDEN</p>
+            <p class="meta">Workshops &ndash; DJs &ndash; Live Music &ndash; Interactive Sessions &ndash; Surprise Acts</p>
+            <p class="meta">Dress code: We're all mad here... join the circus!</p>
+            <p class="meta">To help keep the show on the road, the director suggests an entrance donation of 20€. If times are tough, a reduced admission of 10€ still goes a long way.</p>
+            <p class="meta">This curated experience starts at 2pm, with the central tea ceremony at 3pm. Don't be late!</p>
+            <blockquote>
+                <p><i>&ldquo;I knew who I was this morning, but I've changed a few times since then.&rdquo; &mdash; Alice</i></p>
+            </blockquote>
+        </section>
+
+        <section class="logo-section" aria-label="Wonderland logo">
+            <img src="assets/T105_rabbit.png" alt="Wonderland House and Rabbits logo">
+        </section>
 
         <!-- <div class="box-container">
             <div id="ct">
@@ -223,6 +313,7 @@
                     // Remove event listeners after first play
                     document.removeEventListener('touchstart', playVideo);
                     document.removeEventListener('scroll', playVideo);
+                    document.removeEventListener('click', playVideo);
                 }
             }
 
