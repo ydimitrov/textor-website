@@ -1,241 +1,408 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="robots" content="noindex">
-    <link rel="icon" type="image/x-icon" href="assets/icons/favicon.ico">
-    <link rel="stylesheet" href="assets/text_box.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <title>Welcome to Wonderland</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex" />
+    <link rel="icon" type="image/x-icon" href="assets/icons/favicon.ico" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <title>Wonderland</title>
     <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            /* overflow: hidden; */
-            background-color: black;
-        }
-        .content-wrapper {
-            width: 100%;
-            /* min-height: 100vh; */
-            display: flex;
-            flex-direction: column;
-        }
+      :root {
+        --gold: #f5a623;
+        --text: #f2f2f2;
+        --bg: #000;
+      }
 
-        #videoContainer {
-            height: 100vh;
-            width: 100%;
-            position: relative;
-        }
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        background: var(--bg);
+        color: var(--text);
+        font-family: "Cinzel", serif;
+      }
 
-        .box-container {
-            min-height: 100vh;
-            position: relative;
-            background-color: black;
-            padding: 20px;
-        }
-        #mainVideo {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-            opacity: 1;
-        }
-        .hidden {
-            opacity: 0;
-        }
+      body.locked {
+        height: 100vh;
+        overflow: hidden;
+      }
 
-        .maps-container {
-            position: relative;
-            width: 100%;
-            background: black;
-        }
+      /* Intro video */
+      #videoContainer {
+        position: relative;
+        height: 100vh;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: #000;
+      }
+      #mainVideo {
+        max-width: 90vw;
+        max-height: 70vh;
+        object-fit: contain;
+      }
+      #videoContainer::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 30%;
+        background: linear-gradient(
+          to bottom,
+          rgba(0, 0, 0, 0) 0%,
+          rgba(0, 0, 0, 0.85) 100%
+        );
+        pointer-events: none;
+      }
 
-        .floor-map {
-            height: 100vh;
-            display: grid;
-            place-items: center;
-            opacity: 0;
-            transform: scale(0.96);
-            transition: opacity .5s ease, transform .5s ease;
-        }       
+      .after-video.hidden {
+        display: none;
+      }
 
-        .floor-map object,
-        .floor-map img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            display: block;
-        }
+      section {
+        padding: clamp(28px, 6vw, 72px) 24px;
+      }
 
-        .floor-map.visible {
-            opacity: 1;
-            transform: scale(1);
-        }
+      /* Reveal */
+      .reveal {
+        opacity: 0;
+        transform: translateY(25px);
+        transition: opacity 3s ease, transform 3s ease;
+      }
+      .reveal.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
 
-        .floor-map svg {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-        
-        .house-outline {
-            position: sticky;
-            top: 0;
-            height: 100vh;
-            z-index: 2;
-            pointer-events: none;
-            display: grid;
-            place-items: center;
-        }
-        .house-outline img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            display: block;
-        }
-        .floors {
-            position: relative;
-            z-index: 1;
-        }
-        
-        .stacked-maps {
-        /* existing knobs */
-            --base-top: 10vh;
-            --gap: 50px;
-            --stage-h: 70vh;
+      /* Quotes */
+      blockquote {
+        margin: 0;
+        max-width: 900px;
+        padding: 0;
+        border: none;
+        background: transparent;
+      }
+      blockquote p {
+        margin: 0.35em 0;
+        font-size: clamp(16px, 2.8vw, 22px);
+        line-height: 1.55;
+      }
+      blockquote p.left {
+        text-align: left;
+      }
+      blockquote p.right {
+        text-align: right;
+      }
 
-            --map-max-w: 60vw;
-            --map-max-h: 70vh;
-            --floor-scale: 0.5;
+      /* Intro / Details layout */
+      .intro-section,
+      .details-section {
+        display: grid;
+        place-items: center;
+        gap: 24px;
+        text-align: center;
+      }
 
-            position: relative;
-            background: #000;
-        }
-        
-        .stacked-maps > .outline {
-            position: sticky;
-            top: var(--base-top);
-            height: var(--stage-h);
-            /* center horizontally */
-            display: block;
-            margin-inline: auto;
-            width: auto;
-            height: auto;
-            max-width: var(--map-max-w);
-            max-height: var(--map-max-h);
-            object-fit: contain;
-            z-index: 100;
-            pointer-events: none;
-            opacity: 0.95;
-        }
-        
+      /* Conversation pacing */
+      .intro-section blockquote p.left {
+        margin-bottom: 24px;
+      }
+      .intro-section blockquote p.left.reveal {
+        transition: opacity 1s ease 0.1s, transform 1s ease 0.1s;
+      }
+      .intro-section blockquote p.right.reveal {
+        transition: opacity 1.5s ease 1.5s, transform 1.5s ease 1.5s;
+      }
 
-        .stacked-maps > .floor {
-            position: sticky;
-            top: calc(var(--base-top) + (var(--i) * var(--gap)));
-            height: var(--stage-h);
-            z-index: var(--z);
-            display: grid;
-            place-items: center; /* centers the image box */
-        }
-        
-        
-        .stacked-maps > .floor:is(:hover, :focus-within) {
-            transform: none;
-        }        
-        .stacked-maps > .floor > img {
-            display: block;
-            width: auto;
-            height: auto;
-            max-width: calc(var(--map-max-w) * var(--floor-scale));
-            max-height: calc(var(--map-max-h) * var(--floor-scale));
-            object-fit: contain;
-        }
-        html, body { overflow: auto; }
-        
-        @supports (animation-timeline: scroll()) {
-        /* optional: fancy scroll-driven reveal (Chrome/Safari TP) */
-        }
-        
-        .stacked-maps > .floor {
-            opacity: 1;
-            transform: none;
-        }        
+      /* Intro paragraphs (start after Cat) */
+      .intro-section > p.reveal.visible {
+        transition: opacity 1.5s ease 2s, transform 1.5s ease 2s;
+      }
+      .intro-section p:last-of-type {
+        margin-bottom: 48px;
+      }
+
+      /* Details */
+      .details-section blockquote {
+        margin: 40px 0;
+      }
+      .intro-section p,
+      .details-section p {
+        margin: 0;
+        font-size: clamp(14px, 2.1vw, 18px);
+        line-height: 1.7;
+        max-width: 900px;
+        text-wrap: pretty;
+      }
+      .lead {
+        color: var(--gold);
+        letter-spacing: 0.06em;
+        font-size: clamp(18px, 3vw, 24px);
+      }
+      .meta {
+        opacity: 0.95;
+        color: var(--gold);
+      }
+
+      /* Stacked maps */
+      .stacked-maps {
+        --base-top: 10vh;
+        --gap: 50px;
+        --stage-h: 70vh;
+        --map-max-w: 60vw;
+        --map-max-h: 70vh;
+        position: relative;
+        background: var(--bg);
+      }
+      .stacked-maps > .outline {
+        position: sticky;
+        top: var(--base-top);
+        height: var(--stage-h);
+        display: block;
+        margin-inline: auto;
+        max-width: var(--map-max-w);
+        max-height: var(--map-max-h);
+        width: auto;
+        height: auto;
+        object-fit: contain;
+        z-index: 100;
+        pointer-events: none;
+        opacity: 0.95;
+      }
+      .stacked-maps > .floor {
+        position: sticky;
+        top: calc(var(--base-top) + (var(--i) * var(--gap)));
+        height: var(--stage-h);
+        z-index: var(--z);
+        display: grid;
+        place-items: center;
+        transition: opacity 0.6s ease;
+      }
+      .stacked-maps > .floor.hidden {
+        opacity: 0;
+        pointer-events: none;
+      }
+      .stacked-maps > .floor > img {
+        display: block;
+        width: auto;
+        height: auto;
+        max-width: var(--map-max-w);
+        max-height: var(--map-max-h);
+        object-fit: contain;
+      }
+
+      .logo-section {
+        display: grid;
+        place-items: center;
+        padding: 40px 24px 64px;
+      }
+      .logo-section img {
+        width: 30%;
+        max-width: min(520px, 80vw);
+        object-fit: contain;
+        display: block;
+      }
     </style>
-</head>
-<body>
-    <div class="content-wrapper">
-        <div id="videoContainer">
-            <video id="mainVideo" playsinline muted preload="auto">
-                <source src="assets/Video_bunnyhop_v2.mp4" type="video/mp4">
-            </video>
-        </div>
-        <div class="stacked-maps"
-            style="--base-top: 8vh; --gap: 50px; --stage-h: 70vh;">
-        <!-- Outline pinned near the top -->
-        <img class="outline" src="assets/house_map_house_outline.png" alt="Outline">
+  </head>
+  <body class="locked">
+    <div id="videoContainer">
+      <video id="mainVideo" playsinline muted preload="auto">
+        <source src="assets/Video_bunnyhop_v2_3secs.mp4" type="video/mp4" />
+      </video>
+    </div>
 
-        <!-- Floors: first one (F3) parks closest to the top, then F2, F1, F0 -->
-        <section class="floor" style="--i:0; --z:4">
-            <img src="assets/house_map_floor3.png" alt="F3">
-        </section>
-        <section class="floor" style="--i:1; --z:3">
-            <img src="assets/house_map_floor2.png" alt="F2">
-        </section>
-        <section class="floor" style="--i:2; --z:2">
-            <img src="assets/house_map_floor1.png" alt="F1">
-        </section>
-        <section class="floor" style="--i:3; --z:1">
-            <img src="assets/house_map_floor0.png" alt="F0">
-        </section>
-        </div>   
+    <div class="after-video hidden">
+      <section class="intro-section">
+        <blockquote>
+          <p class="left reveal">
+            <i>&ldquo;Where should I go?&rdquo; &mdash; Alice</i>
+          </p>
+          <p class="right reveal">
+            <i
+              >&ldquo;That depends on where you want to end up.&rdquo; &mdash;
+              The Cheshire Cat</i
+            >
+          </p>
+        </blockquote>
+        <p class="reveal">
+          Follow us down the rabbit hole... for a world of wonders.
+        </p>
+        <p class="reveal">
+          <span style="color: var(--gold)">Le Cirque des Rêves Oubliés</span> is
+          back in town! On
+          <strong style="color: var(--gold)">September 13</strong>, the curtains
+          to Wonderland open at
+          <strong style="color: var(--gold)">Textor</strong>.
+        </p>
+      </section>
 
-        <!-- <div class="box-container">
-            <div id="ct">
-            <div class="corner "id="left_top"></div>
-            <div class="corner" id="left_bottom"></div>
-            <div class="corner" id="right_top"></div>
-            <div class="corner" id="right_bottom"></div>
-            <span>Winston Churchill</span>
-            <blockquote>
-                <p><i>&ldquo;Success consists of going from failure to failure without loss of enthusiasm.&rdquo; </i></p>
-            </blockquote>
-            </div>
-        </div> -->
+      <div class="stacked-maps">
+        <img
+          class="outline"
+          src="assets/house_map_house_outline.png"
+          alt="Outline"
+        />
+        <section class="floor" style="--i: 0; --z: 4">
+          <img src="assets/house_map_floor3.png" alt="F3" />
+        </section>
+        <section class="floor" style="--i: 1; --z: 3">
+          <img src="assets/house_map_floor2.png" alt="F2" />
+        </section>
+        <section class="floor" style="--i: 2; --z: 2">
+          <img src="assets/house_map_floor1.png" alt="F1" />
+        </section>
+        <section class="floor" style="--i: 3; --z: 1">
+          <img src="assets/house_map_floor0.png" alt="F0" />
+        </section>
+      </div>
+
+      <section class="details-section">
+        <p class="lead reveal">4 FLOORS • 5 ROOMS • 1 GARDEN</p>
+        <p class="reveal">
+          Workshops • DJs • Live Music • Interactive Sessions • Surprise Acts
+        </p>
+        <p class="reveal">
+          Dress code:
+          <span class="meta">We're all mad here... join the circus!</span>
+        </p>
+        <p class="reveal">
+          To help keep the show on the road, the director suggests an entrance
+          donation of
+          <span class="meta">20€</span>. If times are tough, a reduced admission
+          of <span class="meta">10€</span> still goes a long way.
+        </p>
+        <p class="reveal">
+          This curated experience starts at <span class="meta">2pm</span>, with
+          the central tea ceremony at <span class="meta">3pm</span>. Don't be
+          late!
+        </p>
+
+        <blockquote class="reveal">
+          <p class="left">
+            <i
+              >&ldquo;I knew who I was this morning, but I've changed a few
+              times since then.&rdquo;</i
+            >
+          </p>
+          <p class="right"><i>&mdash; Alice</i></p>
+        </blockquote>
+      </section>
+
+      <section class="logo-section" aria-label="Wonderland logo">
+        <img
+          src="assets/T105_rabbit.png"
+          alt="Wonderland House and Rabbits logo"
+        />
+      </section>
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const video = document.getElementById('mainVideo');
-            let hasPlayed = false;
+      (function () {
+        const video = document.getElementById("mainVideo");
+        const after = document.querySelector(".after-video");
+        let hasPlayed = false;
 
-            // Load and pause at first frame
-            video.load();
-            video.currentTime = 0;
+        // first frame visible
+        video.load();
+        video.currentTime = 0;
+        video.pause();
 
-            function playVideo() {
-                if (!hasPlayed) {
-                    video.play();
-                    hasPlayed = true;
-                    
-                    // Remove event listeners after first play
-                    document.removeEventListener('touchstart', playVideo);
-                    document.removeEventListener('scroll', playVideo);
-                }
-            }
+        // lock scroll
+        function block(e) {
+          e.preventDefault();
+        }
+        function enableScroll() {
+          document.body.classList.remove("locked");
+          window.removeEventListener("wheel", block, { passive: false });
+          window.removeEventListener("touchmove", block, { passive: false });
+        }
+        window.addEventListener("wheel", block, { passive: false });
+        window.addEventListener("touchmove", block, { passive: false });
 
-            // Touch event
-            document.addEventListener('touchstart', playVideo);
+        function playVideo() {
+          if (hasPlayed) return;
+          hasPlayed = true;
+          video.play().catch(() => {});
+          document.removeEventListener("touchstart", playVideo);
+          document.removeEventListener("click", playVideo);
+          document.removeEventListener("keydown", playVideo);
+          document.removeEventListener("scroll", scrollTrigger);
+        }
+        function scrollTrigger() {
+          if (window.scrollY > 30) playVideo();
+        }
+        document.addEventListener("scroll", scrollTrigger, { passive: true });
+        document.addEventListener("touchstart", playVideo, { passive: true });
+        document.addEventListener("click", playVideo);
+        document.addEventListener("keydown", playVideo);
 
-            // Scroll event
-            document.addEventListener('scroll', playVideo);
+        // after video ends: show content, unlock, then attach reveals
+        video.addEventListener("ended", () => {
+          after.classList.remove("hidden");
+          enableScroll();
 
-            // Click event
-            document.addEventListener('click', playVideo);
+          const io = new IntersectionObserver(
+            (entries) => {
+              entries.forEach((entry) => {
+                if (entry.isIntersecting) entry.target.classList.add("visible");
+              });
+            },
+            { rootMargin: "0px 0px -10% 0px", threshold: 0.1 }
+          );
 
+          document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
         });
+      })();
+
+      // floors hide after stacking
+      document.addEventListener("DOMContentLoaded", () => {
+        const outline = document.querySelector(".stacked-maps > .outline");
+        const floors = Array.from(
+          document.querySelectorAll(".stacked-maps > .floor")
+        );
+        if (!outline || !floors.length) return;
+
+        const EPS = 1;
+        const overlaps = (a, b) =>
+          !(
+            a.right <= b.left ||
+            a.left >= b.right ||
+            a.bottom <= b.top ||
+            a.top >= b.bottom
+          );
+
+        function checkFloors() {
+          const o = outline.getBoundingClientRect();
+          const rects = floors.map((f) =>
+            f.querySelector("img")?.getBoundingClientRect()
+          );
+          floors.forEach((section, i) => {
+            const r = rects[i];
+            if (!r) return;
+            const overlapped = overlaps(r, o);
+            const reachedTop = r.top <= o.top + EPS;
+            const nextReached = rects[i + 1]
+              ? rects[i + 1].top <= o.top + EPS
+              : true;
+            const hide = overlapped && reachedTop && nextReached;
+            section.classList.toggle("hidden", hide);
+          });
+        }
+
+        window.addEventListener("scroll", checkFloors, { passive: true });
+        window.addEventListener("resize", checkFloors);
+        checkFloors();
+      });
     </script>
-</body>
+  </body>
 </html>
