@@ -14,7 +14,7 @@
     <title>Wonderland</title>
     <style>
       :root {
-        --gold: #f5a623; /* close to rabbit tone */
+        --gold: #f5a623;
         --text: #f2f2f2;
         --bg: #000;
       }
@@ -29,13 +29,13 @@
         color: var(--text);
         font-family: "Cinzel", serif;
       }
-      /* Lock page while intro video is playing */
+
       body.locked {
         height: 100vh;
         overflow: hidden;
       }
 
-      /* --- Intro full-viewport video --- */
+      /* Intro video */
       #videoContainer {
         position: relative;
         height: 100vh;
@@ -45,13 +45,11 @@
         align-items: center;
         background: #000;
       }
-
       #mainVideo {
         max-width: 90vw;
         max-height: 70vh;
-        object-fit: contain; /* keep full frame visible */
+        object-fit: contain;
       }
-      /* subtle gradient at bottom edge for nicer transition */
       #videoContainer::after {
         content: "";
         position: absolute;
@@ -67,7 +65,6 @@
         pointer-events: none;
       }
 
-      /* Content after the video. Hidden until video ends. */
       .after-video.hidden {
         display: none;
       }
@@ -76,28 +73,25 @@
         padding: clamp(28px, 6vw, 72px) 24px;
       }
 
-      /* --- Slow, smooth reveal on scroll --- */
+      /* Reveal */
       .reveal {
         opacity: 0;
         transform: translateY(25px);
         transition: opacity 3s ease, transform 3s ease;
-
-        /* will-change: opacity, transform; */
       }
-
       .reveal.visible {
         opacity: 1;
         transform: translateY(0);
       }
 
+      /* Quotes */
       blockquote {
         margin: 0;
         max-width: 900px;
         padding: 0;
-        background: transparent;
         border: none;
+        background: transparent;
       }
-
       blockquote p {
         margin: 0.35em 0;
         font-size: clamp(16px, 2.8vw, 22px);
@@ -106,11 +100,11 @@
       blockquote p.left {
         text-align: left;
       }
-
       blockquote p.right {
         text-align: right;
       }
 
+      /* Intro / Details layout */
       .intro-section,
       .details-section {
         display: grid;
@@ -119,29 +113,29 @@
         text-align: center;
       }
 
+      /* Conversation pacing */
       .intro-section blockquote p.left {
-        margin-bottom: 24px; /* increase this value as needed */
+        margin-bottom: 24px;
       }
       .intro-section blockquote p.left.reveal {
-        transition: opacity 1.5s ease 0.3s, transform 1.5s ease 0.3s;
+        transition: opacity 1s ease 0.1s, transform 1s ease 0.1s;
       }
-
       .intro-section blockquote p.right.reveal {
         transition: opacity 1.5s ease 1.5s, transform 1.5s ease 1.5s;
       }
 
-      /* Intro paragraphs start 1s after Cat (2.5s) */
+      /* Intro paragraphs (start after Cat) */
       .intro-section > p.reveal.visible {
         transition: opacity 1.5s ease 2s, transform 1.5s ease 2s;
       }
       .intro-section p:last-of-type {
-        margin-bottom: 48px; /* adds more breathing room before next section */
+        margin-bottom: 48px;
       }
 
+      /* Details */
       .details-section blockquote {
-        margin: 40px 0; /* extra spacing above/below */
+        margin: 40px 0;
       }
-
       .intro-section p,
       .details-section p {
         margin: 0;
@@ -158,9 +152,9 @@
       .meta {
         opacity: 0.95;
         color: var(--gold);
-      } /* apply gold to details text */
+      }
 
-      /* --- Stacked maps --- */
+      /* Stacked maps */
       .stacked-maps {
         --base-top: 10vh;
         --gap: 50px;
@@ -221,7 +215,6 @@
     </style>
   </head>
   <body class="locked">
-    <!-- Intro: show first frame, then play on user interaction. All other content hidden until 'ended'. -->
     <div id="videoContainer">
       <video id="mainVideo" playsinline muted preload="auto">
         <source src="assets/Video_bunnyhop_v2_3secs.mp4" type="video/mp4" />
@@ -289,9 +282,9 @@
           of <span class="meta">10€</span> still goes a long way.
         </p>
         <p class="reveal">
-          This curated experience starts at
-          <span class="meta">2pm</span>, with the central tea ceremony at
-          <span class="meta">3pm</span>. Don't be late!
+          This curated experience starts at <span class="meta">2pm</span>, with
+          the central tea ceremony at <span class="meta">3pm</span>. Don't be
+          late!
         </p>
 
         <blockquote class="reveal">
@@ -319,12 +312,12 @@
         const after = document.querySelector(".after-video");
         let hasPlayed = false;
 
-        // Ensure first frame is visible
+        // first frame visible
         video.load();
         video.currentTime = 0;
         video.pause();
 
-        // Prevent scroll while locked
+        // lock scroll
         function block(e) {
           e.preventDefault();
         }
@@ -337,101 +330,73 @@
         window.addEventListener("touchmove", block, { passive: false });
 
         function playVideo() {
-          if (!hasPlayed) {
-            hasPlayed = true;
-            video.play().catch(() => {});
-            document.removeEventListener("touchstart", playVideo);
-            document.removeEventListener("click", playVideo);
-            document.removeEventListener("keydown", playVideo);
-            document.removeEventListener("scroll", scrollTrigger);
-          }
+          if (hasPlayed) return;
+          hasPlayed = true;
+          video.play().catch(() => {});
+          document.removeEventListener("touchstart", playVideo);
+          document.removeEventListener("click", playVideo);
+          document.removeEventListener("keydown", playVideo);
+          document.removeEventListener("scroll", scrollTrigger);
         }
-
         function scrollTrigger() {
-          if (window.scrollY > 30) {
-            playVideo();
-          }
+          if (window.scrollY > 30) playVideo();
         }
         document.addEventListener("scroll", scrollTrigger, { passive: true });
         document.addEventListener("touchstart", playVideo, { passive: true });
         document.addEventListener("click", playVideo);
         document.addEventListener("keydown", playVideo);
 
-        // When video ends, show the rest and unlock scroll
+        // after video ends: show content, unlock, then attach reveals
         video.addEventListener("ended", () => {
           after.classList.remove("hidden");
           enableScroll();
-        });
 
-        // Reveal-on-scroll
-        const io = new IntersectionObserver(
-          (entries) => {
-            entries.forEach((entry) => {
-              if (entry.isIntersecting) entry.target.classList.add("visible");
-            });
-          },
-          { rootMargin: "0px 0px -10% 0px", threshold: 0.1 }
-        );
+          const io = new IntersectionObserver(
+            (entries) => {
+              entries.forEach((entry) => {
+                if (entry.isIntersecting) entry.target.classList.add("visible");
+              });
+            },
+            { rootMargin: "0px 0px -10% 0px", threshold: 0.1 }
+          );
 
-        const observeLater = () => {
           document.querySelectorAll(".reveal").forEach((el) => io.observe(el));
-        };
-        const mo = new MutationObserver(() => observeLater());
-        mo.observe(after, { attributes: true, attributeFilter: ["class"] });
+        });
       })();
 
-      // Hide floors only AFTER they stack: a floor hides once it overlaps the outline
-      // AND the next floor has also reached the outline (so we saw the stack).
+      // floors hide after stacking
       document.addEventListener("DOMContentLoaded", () => {
         const outline = document.querySelector(".stacked-maps > .outline");
         const floors = Array.from(
           document.querySelectorAll(".stacked-maps > .floor")
         );
+        if (!outline || !floors.length) return;
 
-        function intersects(a, b) {
-          return !(
+        const EPS = 1;
+        const overlaps = (a, b) =>
+          !(
             a.right <= b.left ||
             a.left >= b.right ||
             a.bottom <= b.top ||
             a.top >= b.bottom
           );
-        }
 
         function checkFloors() {
-          if (!outline) return;
           const o = outline.getBoundingClientRect();
-          for (let i = 0; i < floors.length; i++) {
-            const section = floors[i];
-            const img = section.querySelector("img");
-            if (!img) continue;
-            const r = img.getBoundingClientRect();
-
-            const overlapped = intersects(r, o);
-            const reachedTop = r.top <= o.top + 1;
-
-            // Look at next floor (if any)
-            const next = floors[i + 1];
-            let nextReachedTop = false;
-            if (next) {
-              const nextImg = next.querySelector("img");
-              if (nextImg) {
-                const nr = nextImg.getBoundingClientRect();
-                nextReachedTop = nr.top <= o.top + 1;
-              }
-            }
-
-            // Rule: hide current floor only after it has overlapped + reached the outline top
-            // AND the next floor (if exists) has also reached the outline top (stacked).
-            // For the last floor (no next), hide when it overlaps and reaches the top.
-            const shouldHide =
-              overlapped && reachedTop && (next ? nextReachedTop : true);
-
-            if (shouldHide) {
-              section.classList.add("hidden");
-            } else {
-              section.classList.remove("hidden");
-            }
-          }
+          const rects = floors.map((f) =>
+            f.querySelector("img")?.getBoundingClientRect()
+          );
+          floors.forEach((section, i) => {
+            const r = rects[i];
+            if (!r) return;
+            const overlapped = overlaps(r, o);
+            const reachedTop = r.top <= o.top + EPS;
+            const nextReached = rects[i + 1]
+              ? rects[i + 1].top <= o.top + EPS
+              : true;
+            const hide = overlapped && reachedTop && nextReached;
+            section.classList.toggle("hidden", hide);
+          });
         }
 
         window.addEventListener("scroll", checkFloors, { passive: true });
